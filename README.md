@@ -3,8 +3,13 @@
 ## 🧠 Giới thiệu
 Đây là dự án game Cờ Caro được xây dựng bằng JavaFX. Người chơi có thể chơi với:
 - Người chơi khác
-- Máy tính với nhiều cấp độ: Dễ (chỉ chặn hoặc tấn công thắng ngay), Trung bình (đánh giá mọi nước đi có thể và chọn nước có điểm số cao nhất),
-                             Nâng cao (AI sử dụng thuật toán di truyền - Genetic Algorithm), Khó (Sử dụng thuật toán MInimax và alpha-beta pruning)
+- Máy tính với nhiều cấp độ: 
+  - Dễ (chỉ chặn hoặc tấn công thắng ngay)
+  - Trung bình (đánh giá mọi nước đi có thể và chọn nước có điểm số cao nhất)
+  - Nâng cao (AI sử dụng thuật toán di truyền - Genetic Algorithm)
+  - Khó (Sử dụng thuật toán Minimax và alpha-beta pruning)
+
+---
 
 ## 🚀 Cách chạy dự án
 
@@ -25,55 +30,56 @@
 ```bash
 javac --module-path %PATH_TO_FX% --add-modules javafx.controls -d bin src/main/Main.java
 java --module-path %PATH_TO_FX% --add-modules javafx.controls -cp bin main.Main
+```
 
+---
 
-🚀 Bắt Đầu
-Yêu Cầu
+## 🧬 Bắt Đầu
+
+### Yêu Cầu
 Đảm bảo đã cài đặt:
+- Git
+- JavaFX
+- Selenium
+- Chromedriver (nếu bạn làm việc với Twitter KOL crawler hoặc tương tự)
 
-Git
+---
 
-JavaFX
+## 📦 Sao Chép Kho Lưu Trữ
 
-Selenium
-
-Chromedriver (nếu bạn làm việc với Twitter KOL crawler hoặc tương tự)
-
-🧬 Sao Chép Kho Lưu Trữ
-bash
-Sao chép
-Chỉnh sửa
+```bash
 git clone https://github.com/ClonerGit/BTL-Nh-m-5-Caro-Bot.git
 cd BTL-Nh-m-5-Caro-Bot
-🌿 Thực Hiện Thay Đổi Trên Nhánh Mới
-Chuyển sang nhánh chính và pull bản mới nhất:
+```
 
-bash
-Sao chép
-Chỉnh sửa
+---
+
+## 🌿 Thực Hiện Thay Đổi Trên Nhánh Mới
+
+### 1. Chuyển sang nhánh chính và pull bản mới nhất:
+```bash
 git checkout main
 git pull origin main
-Tạo và chuyển sang nhánh mới để làm việc:
+```
 
-bash
-Sao chép
-Chỉnh sửa
+### 2. Tạo và chuyển sang nhánh mới để làm việc:
+```bash
 git checkout -b <ten-nhanh-moi>
-Thực hiện thay đổi, sau đó đưa vào staging area:
+```
 
-bash
-Sao chép
-Chỉnh sửa
+### 3. Thực hiện thay đổi, sau đó đưa vào staging area:
+```bash
 git add .
-Commit với thông điệp rõ ràng:
+```
 
-bash
-Sao chép
-Chỉnh sửa
+### 4. Commit với thông điệp rõ ràng:
+```bash
 git commit -m "Mô tả ngắn về thay đổi"
-⬆️ Đẩy Nhánh Lên Remote
-bash
-Sao chép
-Chỉnh sửa
-git push origin <ten-nhanh-moi>
+```
 
+---
+
+## ⬆️ Đẩy Nhánh Lên Remote
+```bash
+git push origin <ten-nhanh-moi>
+```
