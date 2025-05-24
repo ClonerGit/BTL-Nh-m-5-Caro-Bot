@@ -76,7 +76,7 @@ public class CaroAIHard {
         return false;
     }
 
-    private static int evaluateBoard(char[][] board) {
+    public static int evaluateBoard(char[][] board) {
         int score = 0;
         for (int x = 0; x < SIZE; x++) {
             for (int y = 0; y < SIZE; y++) {

@@ -3,7 +3,6 @@ package menu;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Modality;
-import javafx.scene.Scene;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
@@ -12,7 +11,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.geometry.Pos;
-import javafx.geometry.Insets;
 import javafx.scene.paint.Color;
 import ui.GameBoardView;
 
@@ -50,13 +48,19 @@ public class MenuController {
         description.setFont(Font.font("Arial", FontWeight.BOLD, 16));
         description.setFill(Color.WHITE);
 
-        // Các nút độ khó
+     // Các nút độ khó
         Button easyBtn = createDifficultyButton("Dễ", "#4CAF50");
         Button mediumBtn = createDifficultyButton("Trung bình", "#FFC107");
         Button hardBtn = createDifficultyButton("Khó", "#F44336");
+        Button advancedBtn = createDifficultyButton("Nâng cao", "#3F51B5"); 
         Button cancelBtn = createDifficultyButton("Hủy", "#9E9E9E");
 
-        HBox buttonBox = new HBox(15, easyBtn, mediumBtn, hardBtn, cancelBtn);
+        HBox row1 = new HBox(15, easyBtn, mediumBtn, advancedBtn, hardBtn);
+        HBox row2 = new HBox(15, cancelBtn);
+        row1.setAlignment(Pos.CENTER);
+        row2.setAlignment(Pos.CENTER);
+
+        VBox buttonBox = new VBox(10, row1, row2);
         buttonBox.setAlignment(Pos.CENTER);
 
         root.getChildren().addAll(title, description, buttonBox);
@@ -69,6 +73,11 @@ public class MenuController {
 
         mediumBtn.setOnAction(e -> {
             dialog.setResult("medium");
+            dialog.close();
+        });
+        
+        advancedBtn.setOnAction(e -> {
+            dialog.setResult("advanced");
             dialog.close();
         });
 
@@ -87,14 +96,14 @@ public class MenuController {
 
         // Hiển thị dialog và xử lý kết quả
         dialog.showAndWait().ifPresent(result -> {
-            if ("easy".equals(result) || "medium".equals(result) || "hard".equals(result)) {
-                GameBoardView gameBoard = new GameBoardView(stage, true, result);
-                gameBoard.show();
-            } else {
-                // Quay về menu chính
-                MenuView menuView = new MenuView(stage, this);
-                menuView.show();
-            }
+        	if ("easy".equals(result) || "medium".equals(result) || "hard".equals(result) || "advanced".equals(result)) {
+        	    GameBoardView gameBoard = new GameBoardView(stage, true, result);
+        	    gameBoard.show();
+        	} else {
+        	    // Quay về menu chính
+        	    MenuView menuView = new MenuView(stage, this);
+        	    menuView.show();
+        	}
         });
     }
 

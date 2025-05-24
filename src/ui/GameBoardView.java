@@ -19,8 +19,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.control.Label;
 import java.util.Stack;
 import gamestates.CaroAIEasy;
+import gamestates.CaroAIGA;
 import gamestates.CaroAIMedium;
 import gamestates.CaroAIHard;
+import algorithm.Move;
+import javafx.scene.control.ButtonType;
 
 public class GameBoardView {
     private Stage stage;
@@ -64,7 +67,12 @@ public class GameBoardView {
         btnUndo.setTooltip(new javafx.scene.control.Tooltip("Hoàn tác nước đi trước"));
 
         btnUndo.setOnAction(e -> undoLastMove());
-        btnNewGame.setOnAction(e -> resetBoard());
+        btnNewGame.setOnAction(e -> {
+            if (gameEnded || confirmReset()) {
+                resetBoard();
+            }
+        });
+
         btnHelp.setOnAction(e -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Hướng dẫn chơi");
@@ -128,15 +136,15 @@ public class GameBoardView {
         stage.show();
     }
 
-    private static class Move {
-        int row, col;
-        char symbol;
-        public Move(int row, int col, char symbol) {
-            this.row = row;
-            this.col = col;
-            this.symbol = symbol;
-        }
-    }
+//    private static class Move {
+//        int row, col;
+//        char symbol;
+//        public Move(int row, int col, char symbol) {
+//            this.row = row;
+//            this.col = col;
+//            this.symbol = symbol;
+//        }
+//    }
 
     private void undoLastMove() {
         if (moveHistory.isEmpty() || gameEnded) {
@@ -169,6 +177,20 @@ public class GameBoardView {
             for (int c = 0; c < SIZE; c++)
                 cells[r][c].setBackground(null);
     }
+    
+    private boolean confirmReset() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Xác nhận hành động");
+        alert.setHeaderText("Bạn có chắc chắn?");
+        alert.setContentText("Ván đang chơi sẽ bị hủy.");
+
+        ButtonType yes = new ButtonType("Có");
+        ButtonType no = new ButtonType("Không");
+        alert.getButtonTypes().setAll(yes, no);
+
+        return alert.showAndWait().orElse(no) == yes;
+    }
+
 
     // Reset bàn cờ về trạng thái ban đầu
     private void resetBoard() {
@@ -240,7 +262,10 @@ public class GameBoardView {
                 break;
             case "medium":
                 move = CaroAIMedium.getMove(board);
-                break;
+                break;    
+            case "advanced":
+            	move = CaroAIGA.getMove(board);
+            	break;
             case "hard":
                 move = CaroAIHard.getMove(board);
                 break;
@@ -284,11 +309,13 @@ public class GameBoardView {
 
             @Override
             public void onHome() {
-                // Quay về menu
+                if (!gameEnded && !confirmReset()) return;
+
                 menu.MenuController controller = new menu.MenuController(stage);
                 menu.MenuView menuView = new menu.MenuView(stage, controller);
                 menuView.show();
             }
+
         });
     }
 

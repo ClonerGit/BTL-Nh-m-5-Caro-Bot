@@ -1,15 +1,19 @@
 package gamestates;
 
+import java.util.ArrayList;
+import java.util.List;
+import utils.BoardUtils;
+
 public class CaroAIEasy {
     private static final int SIZE = 15;
-    
+
     public static int[] getMove(char[][] board) {
-        // 1. Tấn công nếu AI có chuỗi 4 (-> thành 5)
+        // 1. Tấn công nếu AI có thể thắng
         for (int y = 0; y < SIZE; y++) {
             for (int x = 0; x < SIZE; x++) {
                 if (board[x][y] == '\0') {
                     board[x][y] = 'O';
-                    if (checkWin(board, x, y)) {
+                    if (BoardUtils.checkWin(board, x, y, 'O')) {
                         board[x][y] = '\0';
                         return new int[]{x, y};
                     }
@@ -18,12 +22,12 @@ public class CaroAIEasy {
             }
         }
 
-        // 2. Chặn nếu người chơi có chuỗi 4
+        // 2. Chặn nếu người chơi sắp thắng
         for (int y = 0; y < SIZE; y++) {
             for (int x = 0; x < SIZE; x++) {
                 if (board[x][y] == '\0') {
                     board[x][y] = 'X';
-                    if (checkWin(board, x, y)) {
+                    if (BoardUtils.checkWin(board, x, y, 'X')) {
                         board[x][y] = '\0';
                         return new int[]{x, y};
                     }
@@ -32,8 +36,8 @@ public class CaroAIEasy {
             }
         }
 
-        // 3. Ưu tiên nước gần các quân đã đánh
-        java.util.List<int[]> candidates = new java.util.ArrayList<>();
+        // 3. Ưu tiên nước gần quân đã đánh
+        List<int[]> candidates = new ArrayList<>();
         for (int y = 0; y < SIZE; y++) {
             for (int x = 0; x < SIZE; x++) {
                 if (board[x][y] == '\0' && isNearOccupied(board, x, y)) {
@@ -45,8 +49,8 @@ public class CaroAIEasy {
             return candidates.get((int)(Math.random() * candidates.size()));
         }
 
-        // 4. Đi ngẫu nhiên vào ô trống
-        java.util.List<int[]> emptyCells = new java.util.ArrayList<>();
+        // 4. Nếu không có ô nào gần, đi ngẫu nhiên
+        List<int[]> emptyCells = new ArrayList<>();
         for (int y = 0; y < SIZE; y++) {
             for (int x = 0; x < SIZE; x++) {
                 if (board[x][y] == '\0') {
@@ -58,40 +62,22 @@ public class CaroAIEasy {
             return emptyCells.get((int)(Math.random() * emptyCells.size()));
         }
 
-        return null;
-    }
-
-    private static boolean checkWin(char[][] board, int row, int col) {
-        char symbol = board[row][col];
-        return checkDirection(board, row, col, symbol, 1, 0)
-            || checkDirection(board, row, col, symbol, 0, 1)
-            || checkDirection(board, row, col, symbol, 1, 1)
-            || checkDirection(board, row, col, symbol, 1, -1);
-    }
-
-    private static boolean checkDirection(char[][] board, int row, int col, char symbol, int dx, int dy) {
-        int count = 1;
-        int r = row + dx, c = col + dy;
-        while (inBounds(r, c) && board[r][c] == symbol) { count++; r += dx; c += dy; }
-        r = row - dx; c = col - dy;
-        while (inBounds(r, c) && board[r][c] == symbol) { count++; r -= dx; c -= dy; }
-        return count >= 5;
-    }
-
-    private static boolean inBounds(int r, int c) {
-        return r >= 0 && r < SIZE && c >= 0 && c < SIZE;
+        return null; // không còn nước đi
     }
 
     private static boolean isNearOccupied(char[][] board, int x, int y) {
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
-                int nx = x + dx;
-                int ny = y + dy;
+                int nx = x + dx, ny = y + dy;
                 if ((dx != 0 || dy != 0) && inBounds(nx, ny) && board[nx][ny] != '\0') {
                     return true;
                 }
             }
         }
         return false;
+    }
+
+    private static boolean inBounds(int r, int c) {
+        return r >= 0 && r < SIZE && c >= 0 && c < SIZE;
     }
 }
