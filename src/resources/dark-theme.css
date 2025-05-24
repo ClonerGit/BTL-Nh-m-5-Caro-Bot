@@ -1,0 +1,60 @@
+.root {
+    -fx-background-color: #2a0043;
+}
+
+/* Tiêu đề */
+.title {
+    -fx-text-fill: #ff6cf0;
+    -fx-font-family: 'Arial Black', Arial, sans-serif;
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-padding: 20 0 20 0;
+}
+
+/* Icon caro */
+.icon {
+    -fx-text-fill: #00eaff;
+    -fx-font-family: 'Arial Black', Arial, sans-serif;
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 0 30 0;
+}
+
+/* Nút menu */
+.menu-button {
+    -fx-background-color: transparent;
+    -fx-border-color: #e040fb;
+    -fx-border-width: 3px;
+    -fx-border-radius: 18px;
+    -fx-background-radius: 18px;
+    -fx-text-fill: #e040fb;
+    -fx-font-size: 22px;
+    -fx-font-family: 'Arial Black', Arial, sans-serif;
+    -fx-font-weight: bold;
+    -fx-padding: 14 0 14 0;
+    -fx-cursor: hand;
+}
+
+/* Hover nút menu */
+.menu-button:hover {
+    -fx-background-color: #5f1a85;
+    -fx-text-fill: #fff;
+}
+
+/* Nút icon (back, setting) nếu có */
+.icon-button {
+    -fx-background-color: transparent;
+    -fx-border-color: #ff6cf0;
+    -fx-border-width: 2px;
+    -fx-border-radius: 50%;
+    -fx-background-radius: 50%;
+    -fx-padding: 8;
+}
+
+/* Loại bỏ hiệu ứng focus (glow) khi bấm nút */
+.button:focused, .menu-button:focused, .icon-button:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+
