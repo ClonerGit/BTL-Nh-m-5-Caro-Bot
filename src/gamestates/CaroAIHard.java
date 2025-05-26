@@ -1,10 +1,11 @@
 package gamestates;
 
-public class CaroAIHard {
+public class CaroAIHard implements CaroBot{
     private static final int SIZE = 15;
     private static final int MAX_DEPTH = 3;
 
-    public static int[] getMove(char[][] board) {
+    @Override
+    public int[] getMove(char[][] board) {
         int bestScore = Integer.MIN_VALUE;
         int[] bestMove = null;
 
@@ -182,5 +183,10 @@ public class CaroAIHard {
             }
         }
         return copy;
+    }
+    
+    @Override
+    public String getName() {
+        return "Hard AI";
     }
 } 

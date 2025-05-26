@@ -27,7 +27,6 @@ public class MenuController {
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(stage);
 
-        // Tạo giao diện
         VBox root = new VBox(20);
         root.setAlignment(Pos.CENTER);
         root.setStyle(
@@ -38,24 +37,20 @@ public class MenuController {
             "-fx-padding: 32;"
         );
 
-        // Tiêu đề
         Text title = new Text("Chọn độ khó");
-        title.setFont(Font.font("Arial", FontWeight.BOLD, 26)); // hoặc "Tahoma"
+        title.setFont(Font.font("Arial", FontWeight.BOLD, 26));
         title.setFill(Color.web("#ffbd03"));
 
-        // Mô tả
         Text description = new Text("Chọn độ khó cho máy:");
         description.setFont(Font.font("Arial", FontWeight.BOLD, 16));
         description.setFill(Color.WHITE);
 
-     // Các nút độ khó
         Button easyBtn = createDifficultyButton("Dễ", "#4CAF50");
         Button mediumBtn = createDifficultyButton("Trung bình", "#FFC107");
-        Button hardBtn = createDifficultyButton("Khó", "#F44336");
-        Button advancedBtn = createDifficultyButton("Nâng cao", "#3F51B5"); 
+        Button hardBtn = createDifficultyButton("Khó", "#F44336"); 
         Button cancelBtn = createDifficultyButton("Hủy", "#9E9E9E");
 
-        HBox row1 = new HBox(15, easyBtn, mediumBtn, advancedBtn, hardBtn);
+        HBox row1 = new HBox(15, easyBtn, mediumBtn, hardBtn);
         HBox row2 = new HBox(15, cancelBtn);
         row1.setAlignment(Pos.CENTER);
         row2.setAlignment(Pos.CENTER);
@@ -65,7 +60,6 @@ public class MenuController {
 
         root.getChildren().addAll(title, description, buttonBox);
 
-        // Xử lý sự kiện
         easyBtn.setOnAction(e -> {
             dialog.setResult("easy");
             dialog.close();
@@ -73,11 +67,6 @@ public class MenuController {
 
         mediumBtn.setOnAction(e -> {
             dialog.setResult("medium");
-            dialog.close();
-        });
-        
-        advancedBtn.setOnAction(e -> {
-            dialog.setResult("advanced");
             dialog.close();
         });
 
@@ -94,16 +83,14 @@ public class MenuController {
         dialog.getDialogPane().setContent(root);
         dialog.getDialogPane().getScene().setFill(Color.TRANSPARENT);
 
-        // Hiển thị dialog và xử lý kết quả
         dialog.showAndWait().ifPresent(result -> {
-        	if ("easy".equals(result) || "medium".equals(result) || "hard".equals(result) || "advanced".equals(result)) {
-        	    GameBoardView gameBoard = new GameBoardView(stage, true, result);
-        	    gameBoard.show();
-        	} else {
-        	    // Quay về menu chính
-        	    MenuView menuView = new MenuView(stage, this);
-        	    menuView.show();
-        	}
+            if ("easy".equals(result) || "medium".equals(result) || "hard".equals(result)) {
+                GameBoardView gameBoard = new GameBoardView(stage, true, result);
+                gameBoard.show();
+            } else {
+                MenuView menuView = new MenuView(stage, this);
+                menuView.show();
+            }
         });
     }
 
@@ -125,4 +112,79 @@ public class MenuController {
         GameBoardView gameBoard = new GameBoardView(stage, false, null);
         gameBoard.show();
     }
+
+    public void onBotVsBot() {
+        Dialog<String> dialog = new Dialog<>();
+        dialog.initStyle(StageStyle.TRANSPARENT);
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initOwner(stage);
+
+        VBox root = new VBox(20);
+        root.setAlignment(Pos.CENTER);
+        root.setStyle(
+            "-fx-background-color: #2a0043; " +
+            "-fx-border-color: #ffbd03; " +
+            "-fx-border-radius: 16; " +
+            "-fx-background-radius: 16; " +
+            "-fx-padding: 32;"
+        );
+
+        Text title = new Text("Chọn trận đấu AI vs AI");
+        title.setFont(Font.font("Arial", FontWeight.BOLD, 26));
+        title.setFill(Color.web("#ffbd03"));
+
+        Text description = new Text("Chọn cặp AI:");
+        description.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        description.setFill(Color.WHITE);
+
+        Button btnHardVsEasy = createDifficultyButton("Hard vs Easy", "#E91E63");
+        Button btnEasyVsMedium = createDifficultyButton("Easy vs Medium", "#3F51B5");
+        Button btnMediumVsHard = createDifficultyButton("Medium vs Hard", "#009688");
+        Button cancelBtn = createDifficultyButton("Hủy", "#9E9E9E");
+
+        HBox row1 = new HBox(15, btnHardVsEasy, btnEasyVsMedium, btnMediumVsHard);
+        HBox row2 = new HBox(15, cancelBtn);
+        row1.setAlignment(Pos.CENTER);
+        row2.setAlignment(Pos.CENTER);
+
+        VBox buttonBox = new VBox(10, row1, row2);
+        buttonBox.setAlignment(Pos.CENTER);
+
+        root.getChildren().addAll(title, description, buttonBox);
+
+        btnHardVsEasy.setOnAction(e -> {
+            dialog.setResult("hard-easy");
+            dialog.close();
+        });
+
+        btnEasyVsMedium.setOnAction(e -> {
+            dialog.setResult("easy-medium");
+            dialog.close();
+        });
+
+        btnMediumVsHard.setOnAction(e -> {
+            dialog.setResult("medium-hard");
+            dialog.close();
+        });
+
+        cancelBtn.setOnAction(e -> {
+            dialog.setResult("cancel");
+            dialog.close();
+        });
+
+        dialog.getDialogPane().setContent(root);
+        dialog.getDialogPane().getScene().setFill(Color.TRANSPARENT);
+
+        dialog.showAndWait().ifPresent(result -> {
+            if (!"cancel".equals(result)) {
+                GameBoardView gameBoard = new GameBoardView(stage, true, result); // truyền chuỗi định danh độ khó đôi
+                gameBoard.show();
+            } else {
+                MenuView menuView = new MenuView(stage, this);
+                menuView.show();
+            }
+        });
+    }
+
+
 }

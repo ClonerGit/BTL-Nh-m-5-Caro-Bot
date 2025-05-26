@@ -1,9 +1,10 @@
 package gamestates;
 
-public class CaroAIMedium {
+public class CaroAIMedium implements CaroBot{
     private static final int SIZE = 15;
     
-    public static int[] getMove(char[][] board) {
+    @Override
+    public int[] getMove(char[][] board) {
         int bestScore = Integer.MIN_VALUE;
         int[] bestMove = null;
 
@@ -104,5 +105,10 @@ public class CaroAIMedium {
             }
         }
         return false;
+    }
+    
+    @Override
+    public String getName() {
+        return "Medium AI";
     }
 }

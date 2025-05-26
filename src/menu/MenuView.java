@@ -14,6 +14,7 @@ public class MenuView {
 
     private Button btnVsComputer;
     private Button btnVsPlayer;
+    private Button btnBotVsBot; 
 
     public MenuView(Stage stage, MenuController controller) {
         this.stage = stage;
@@ -41,16 +42,23 @@ public class MenuView {
         // Nút 2: Người vs Người
         btnVsPlayer = new Button("  \uD83D\uDC64  VS  \uD83D\uDC64  ");
         btnVsPlayer.getStyleClass().add("menu-button");
+        
+        // ✅ Nút 3: Máy vs Máy
+        btnBotVsBot = new Button("  \uD83D\uDCBB  VS  \uD83D\uDCBB  ");
+        btnBotVsBot.getStyleClass().add("menu-button");
 
         // Responsive width
         btnVsComputer.maxWidthProperty().bind(root.widthProperty().subtract(80));
         btnVsPlayer.maxWidthProperty().bind(root.widthProperty().subtract(80));
+        btnBotVsBot.maxWidthProperty().bind(root.widthProperty().subtract(80)); // ✅
 
-        // Gán sự kiện cho nút
+        // Gán sự kiện cho các nút
         btnVsComputer.setOnAction(e -> controller.onVsComputer());
         btnVsPlayer.setOnAction(e -> controller.onVsPlayer());
+        btnBotVsBot.setOnAction(e -> controller.onBotVsBot()); 
 
-        root.getChildren().addAll(title, icon, btnVsComputer, btnVsPlayer);
+        // Thêm các nút vào layout
+        root.getChildren().addAll(title, icon, btnVsComputer, btnVsPlayer, btnBotVsBot);
 
         Scene scene = new Scene(root, 600, 700);
         scene.getStylesheets().add(getClass().getResource("/resources/dark-theme.css").toExternalForm());

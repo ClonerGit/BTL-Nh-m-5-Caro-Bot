@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import utils.BoardUtils;
 
-public class CaroAIEasy {
+public class CaroAIEasy implements CaroBot{
     private static final int SIZE = 15;
 
-    public static int[] getMove(char[][] board) {
+    @Override
+    public  int[] getMove(char[][] board) {
         // 1. Tấn công nếu AI có thể thắng
         for (int y = 0; y < SIZE; y++) {
             for (int x = 0; x < SIZE; x++) {
@@ -79,5 +80,10 @@ public class CaroAIEasy {
 
     private static boolean inBounds(int r, int c) {
         return r >= 0 && r < SIZE && c >= 0 && c < SIZE;
+    }
+    
+    @Override
+    public String getName() {
+        return "Easy AI";
     }
 }

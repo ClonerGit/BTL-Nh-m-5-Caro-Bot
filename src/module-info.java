@@ -8,6 +8,5 @@ module your.project.name {
     exports gamestates;
     exports utils;
     exports menu;
-    exports algorithm;
-    exports model;
+
 }
