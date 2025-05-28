@@ -5,7 +5,32 @@ import gamestates.CaroBot;
 public class GameSimulator {
     private static final int SIZE = 15;
 
-    public static void playMatch(CaroBot bot1, CaroBot bot2) {
+    public static void playMultipleMatches(CaroBot bot1, CaroBot bot2, int numMatches) {
+        int bot1Wins = 0;
+        int bot2Wins = 0;
+        int draws = 0;
+
+        for (int i = 0; i < numMatches; i++) {
+            System.out.println("Match #" + (i + 1));
+            Result result = playMatch(bot1, bot2);
+            if (result == Result.BOT1_WIN) bot1Wins++;
+            else if (result == Result.BOT2_WIN) bot2Wins++;
+            else draws++;
+        }
+
+        System.out.println("\nFinal results after " + numMatches + " matches:");
+        System.out.println(bot1.getName() + " wins: " + bot1Wins);
+        System.out.println(bot2.getName() + " wins: " + bot2Wins);
+        System.out.println("Draws: " + draws);
+    }
+
+    public enum Result {
+        BOT1_WIN,
+        BOT2_WIN,
+        DRAW
+    }
+
+    public static Result playMatch(CaroBot bot1, CaroBot bot2) {
         char[][] board = new char[SIZE][SIZE];
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
@@ -28,7 +53,7 @@ public class GameSimulator {
                 !inBounds(move[0], move[1]) || board[move[0]][move[1]] != '.') {
                 System.out.println(currentBot.getName() + " made invalid move. " +
                                    players[1 - turn].getName() + " wins!");
-                break;
+                return turn == 0 ? Result.BOT2_WIN : Result.BOT1_WIN;
             }
 
             board[move[0]][move[1]] = symbol;
@@ -36,12 +61,12 @@ public class GameSimulator {
 
             if (checkWin(board, move[0], move[1], symbol)) {
                 System.out.println(currentBot.getName() + " wins in " + moves + " moves!");
-                break;
+                return turn == 0 ? Result.BOT1_WIN : Result.BOT2_WIN;
             }
 
             if (moves >= SIZE * SIZE) {
                 System.out.println("Game ended in a draw.");
-                break;
+                return Result.DRAW;
             }
 
             turn = 1 - turn;
