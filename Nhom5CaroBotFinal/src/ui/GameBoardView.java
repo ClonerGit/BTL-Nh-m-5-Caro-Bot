@@ -59,22 +59,33 @@ public class GameBoardView {
 
     public void show() {
         // Nút chức năng
+        Button btnHome = new Button("🏠 Home");
         Button btnNewGame = new Button("🆕 New Game");
         Button btnHelp = new Button("❓ Help");
         Button btnUndo = new Button("↩️ Undo");
 
+        btnHome.setPrefWidth(150);
         btnNewGame.setPrefWidth(150);
         btnHelp.setPrefWidth(150);
         btnUndo.setPrefWidth(150);
 
+        btnHome.setStyle("-fx-background-color: #FF9800; -fx-text-fill: #2a0043; -fx-font-weight: bold; -fx-background-radius: 10;");
         btnNewGame.setStyle("-fx-background-color: #ffbd03; -fx-text-fill: #2a0043; -fx-font-weight: bold; -fx-background-radius: 10;");
         btnHelp.setStyle("-fx-background-color: #64B5F6; -fx-text-fill: #2a0043; -fx-font-weight: bold; -fx-background-radius: 10;");
         btnUndo.setStyle("-fx-background-color: #fff176; -fx-text-fill: #2a0043; -fx-font-weight: bold; -fx-background-radius: 10;");
 
+        btnHome.setTooltip(new javafx.scene.control.Tooltip("Quay lại menu chính"));
         btnNewGame.setTooltip(new javafx.scene.control.Tooltip("Bắt đầu ván mới"));
         btnHelp.setTooltip(new javafx.scene.control.Tooltip("Hướng dẫn chơi"));
         btnUndo.setTooltip(new javafx.scene.control.Tooltip("Hoàn tác nước đi trước"));
 
+        btnHome.setOnAction(e -> {
+            if (!gameEnded && !confirmReset()) return;
+            menu.MenuController controller = new menu.MenuController(stage);
+            menu.MenuView menuView = new menu.MenuView(stage, controller);
+            menuView.show();
+        });
+        
         btnUndo.setOnAction(e -> undoLastMove());
         btnNewGame.setOnAction(e -> {
             if (gameEnded || confirmReset()) {
