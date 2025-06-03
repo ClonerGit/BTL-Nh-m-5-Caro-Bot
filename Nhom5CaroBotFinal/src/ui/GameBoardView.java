@@ -17,6 +17,10 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.control.Label;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.Stack;
 import gamestates.CaroAIEasy;
 import gamestates.CaroAIMedium;
@@ -325,20 +329,37 @@ public class GameBoardView {
     private void playBotVsBot() {
         new Thread(() -> {
         	int center = SIZE / 2;
-            javafx.application.Platform.runLater(() -> {
-                if (!gameEnded && board[center][center] == '\0') {
-                    int row = center, col = center;
-                    char symbol = 'X';
-                    board[row][col] = symbol;
-                    moveHistory.push(new Move(row, col, symbol));
-                    Text text = (Text) cells[row][col].getChildren().get(0);
-                    text.setText(String.valueOf(symbol));
-                    text.setFill(Color.web("#FF5252"));
-                    cells[row][col].setStyle("-fx-border-color: white; -fx-border-width: 2;");
-                    lastMove = cells[row][col];
-                    xTurn = false;
-                }
-            });
+        	Random rand = new Random();
+
+        	// Tạo danh sách tất cả các ô trong hình vuông 5x5 quanh ô trung tâm
+        	List<int[]> candidates = new ArrayList<>();
+        	for (int dx = -2; dx <= 2; dx++) {
+        	    for (int dy = -2; dy <= 2; dy++) {
+        	        int row = center + dx;
+        	        int col = center + dy;
+        	        if (row >= 0 && row < SIZE && col >= 0 && col < SIZE && board[row][col] == '\0') {
+        	            candidates.add(new int[]{row, col});
+        	        }
+        	    }
+        	}
+
+        	// Chọn ngẫu nhiên 1 ô trong danh sách
+        	int[] firstMove = candidates.get(rand.nextInt(candidates.size()));
+
+        	javafx.application.Platform.runLater(() -> {
+        	    if (!gameEnded) {
+        	        int row = firstMove[0], col = firstMove[1];
+        	        char symbol = 'X';
+        	        board[row][col] = symbol;
+        	        moveHistory.push(new Move(row, col, symbol));
+        	        Text text = (Text) cells[row][col].getChildren().get(0);
+        	        text.setText(String.valueOf(symbol));
+        	        text.setFill(Color.web("#FF5252"));
+        	        cells[row][col].setStyle("-fx-border-color: white; -fx-border-width: 2;");
+        	        lastMove = cells[row][col];
+        	        xTurn = false;
+        	    }
+        	});
 
             // Chờ một chút rồi bắt đầu lượt bot O
             try {
