@@ -102,7 +102,7 @@ public class GameBoardView {
             alert.showAndWait();
         });
 
-        HBox buttonBox = new HBox(18, btnNewGame, btnHelp, btnUndo);
+        HBox buttonBox = new HBox(18, btnHome, btnNewGame, btnHelp, btnUndo);
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setPadding(new javafx.geometry.Insets(14));
         buttonBox.setStyle("-fx-background-color: #fffbe6; -fx-background-radius: 18; -fx-border-color: #ffbd03; -fx-border-radius: 18;");
