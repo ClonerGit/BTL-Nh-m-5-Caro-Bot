@@ -1,70 +1,75 @@
 package gamestates;
 
-public class CaroAIHard implements CaroBot{
-    private static final int SIZE = 15;
-    private static final int MAX_DEPTH = 3;
+public class CaroAIHard implements CaroBot {
 
-    @Override
-    public int[] getMove(char[][] board) {
+	private static final int SIZE = 15; // Kích thước bàn cờ
+	private static final int MAX_DEPTH = 3;
+
+	@Override
+	public int[] getMove(char[][] board) {
         int bestScore = Integer.MIN_VALUE;
-        int[] bestMove = null;
+        int[] bestMove = {-1, -1};
 
-        for (int[] move : generateMoves(board)) {
-            char[][] copy = copyBoard(board);
-            copy[move[0]][move[1]] = 'O';
-            int score = minimax(copy, MAX_DEPTH - 1, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
-            if (score > bestScore) {
-                bestScore = score;
-                bestMove = move;
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (board[i][j] == '\0' && isNearOccupied(board, i, j)) {
+                    board[i][j] = 'O';
+                    int score = minimax(board, MAX_DEPTH - 1, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
+                    board[i][j] = '\0';
+
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMove = new int[]{i, j};
+                    }
+                }
             }
         }
 
         return bestMove;
     }
 
-    private static int minimax(char[][] board, int depth, int alpha, int beta, boolean maximizingPlayer) {
-        if (depth == 0 || checkGameEnd(board)) {
+	private static int minimax(char[][] board, int depth, int alpha, int beta, boolean maximizingPlayer) {
+        int winner = checkWinner(board);
+        if (depth == 0 || winner != 0) {
+            if (winner == 2) return 99999999;
+            if (winner == 1) return -99999999;
             return evaluateBoard(board);
         }
 
         if (maximizingPlayer) {
             int maxEval = Integer.MIN_VALUE;
-            for (int[] move : generateMoves(board)) {
-                char[][] copy = copyBoard(board);
-                copy[move[0]][move[1]] = 'O';
-                int eval = minimax(copy, depth - 1, alpha, beta, false);
-                maxEval = Math.max(maxEval, eval);
-                alpha = Math.max(alpha, eval);
-                if (beta <= alpha) break;
+            for (int i = 0; i < SIZE; i++) {
+                for (int j = 0; j < SIZE; j++) {
+                    if (board[i][j] == '\0' && isNearOccupied(board, i, j)) {
+                        board[i][j] = 'O';
+                        int eval = minimax(board, depth - 1, alpha, beta, false);
+                        board[i][j] = '\0';
+                        maxEval = Math.max(maxEval, eval);
+                        alpha = Math.max(alpha, eval);
+                        if (beta <= alpha) break;
+                    }
+                }
             }
             return maxEval;
         } else {
             int minEval = Integer.MAX_VALUE;
-            for (int[] move : generateMoves(board)) {
-                char[][] copy = copyBoard(board);
-                copy[move[0]][move[1]] = 'X';
-                int eval = minimax(copy, depth - 1, alpha, beta, true);
-                minEval = Math.min(minEval, eval);
-                beta = Math.min(beta, eval);
-                if (beta <= alpha) break;
+            for (int i = 0; i < SIZE; i++) {
+                for (int j = 0; j < SIZE; j++) {
+                    if (board[i][j] == '\0' && isNearOccupied(board, i, j)) {
+                        board[i][j] = 'X';
+                        int eval = minimax(board, depth - 1, alpha, beta, true);
+                        board[i][j] = '\0';
+                        minEval = Math.min(minEval, eval);
+                        beta = Math.min(beta, eval);
+                        if (beta <= alpha) break;
+                    }
+                }
             }
             return minEval;
         }
     }
 
-    private static java.util.List<int[]> generateMoves(char[][] board) {
-        java.util.List<int[]> moves = new java.util.ArrayList<>();
-        for (int x = 0; x < SIZE; x++) {
-            for (int y = 0; y < SIZE; y++) {
-                if (board[x][y] == '\0' && isNearOccupied(board, x, y)) {
-                    moves.add(new int[]{x, y});
-                }
-            }
-        }
-        return moves;
-    }
-
-    private static boolean isNearOccupied(char[][] board, int x, int y) {
+	private static boolean isNearOccupied(char[][] board, int x, int y) {
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
                 int nx = x + dx;
@@ -77,56 +82,116 @@ public class CaroAIHard implements CaroBot{
         return false;
     }
 
-    public static int evaluateBoard(char[][] board) {
-        int score = 0;
+    private static boolean inBounds(int x, int y) {
+        return x >= 0 && y >= 0 && x < SIZE && y < SIZE;
+    }
+
+    private static int evaluateBoard(char[][] board) {
+        int[][] grid = new int[SIZE][SIZE];
+
         for (int x = 0; x < SIZE; x++) {
             for (int y = 0; y < SIZE; y++) {
-                if (board[x][y] == 'O') {
-                    score += evaluatePosition(board, x, y, 'O');
-                } else if (board[x][y] == 'X') {
-                    score -= evaluatePosition(board, x, y, 'X');
+                if (board[x][y] == 'O') grid[x][y] = 2;
+                else if (board[x][y] == 'X') grid[x][y] = 1;
+                else grid[x][y] = 0;
+            }
+        }
+
+        int scoreAI = 0, scoreHuman = 0;
+        int[][] directions = {{1, 0}, {0, 1}, {1, 1}, {1, -1}};
+
+        for (int x = 0; x < SIZE; x++) {
+            for (int y = 0; y < SIZE; y++) {
+                for (int[] dir : directions) {
+                    scoreAI += evaluatePattern(grid, x, y, dir[0], dir[1], 2);
+                    scoreHuman += evaluatePattern(grid, x, y, dir[0], dir[1], 1);
                 }
             }
         }
+
+        return scoreAI - scoreHuman;
+    }
+
+    private static int evaluatePattern(int[][] grid, int x, int y, int dx, int dy, int player) {
+        int[][] patterns = {
+            {0, 1, 1, 0, 0}, {0, 0, 1, 1, 0}, {1, 1, 0, 1, 0},
+            {0, 0, 1, 1, 1}, {1, 1, 1, 0, 0}, {0, 1, 1, 1, 0},
+            {0, 1, 0, 1, 1, 0}, {0, 1, 1, 0, 1, 0}, {1, 1, 1, 0, 1},
+            {1, 1, 0, 1, 1}, {1, 0, 1, 1, 1}, {1, 1, 1, 1, 0},
+            {0, 1, 1, 1, 1}, {0, 1, 1, 1, 1, 0}, {1, 1, 1, 1, 1}
+        };
+
+        int[] scores = {
+            50, 50, 200, 500, 500, 5000, 5000, 5000,
+            5000, 5000, 5000, 5000, 5000, 50000, 99999999
+        };
+
+        int score = 0;
+        for (int p = 0; p < patterns.length; p++) {
+            int[] pattern = patterns[p];
+            boolean matched = true;
+
+            for (int i = 0; i < pattern.length; i++) {
+                int nx = x + i * dx;
+                int ny = y + i * dy;
+
+                if (!inBounds(nx, ny)) {
+                    matched = false;
+                    break;
+                }
+
+                int expected = (pattern[i] == 1) ? player : 0;
+                if (grid[nx][ny] != expected) {
+                    matched = false;
+                    break;
+                }
+            }
+
+            if (matched) {
+                score += scores[p];
+            }
+        }
+
         return score;
     }
 
-    private static int evaluatePosition(char[][] board, int x, int y, char symbol) {
-        int score = 0;
+    // Dummy checkWinner function to be replaced with real implementation
+    private static int checkWinner(char[][] board) {
+		for (int i = 0; i < SIZE; i++) {
+			for (int j = 0; j < SIZE; j++) {
+				if (board[i][j] == 'O')
+				{
+					if (evaluatePosition(board, i, j, 'O')) return 2; // AI wins
+				}
+				if (board[i][j] == 'X')
+				{
+					if (evaluatePosition(board, i, j, 'X')) return 1; // Human wins;
+				}
+			}
+		}
+        return 0;
+    }
+    
+    private static boolean evaluatePosition(char[][] board, int x, int y, char symbol) {
         int[][] directions = {{1, 0}, {0, 1}, {1, 1}, {1, -1}};
 
         for (int[] dir : directions) {
             int count = 1;
-            int openEnds = 0;
+           
 
             int dx = dir[0], dy = dir[1];
             int forward = countConsecutive(board, x, y, dx, dy, symbol);
             int backward = countConsecutive(board, x, y, -dx, -dy, symbol);
             count += forward + backward;
 
-            if (isOpenEnd(board, x + (forward + 1) * dx, y + (forward + 1) * dy)) openEnds++;
-            if (isOpenEnd(board, x - (backward + 1) * dx, y - (backward + 1) * dy)) openEnds++;
-
             if (count >= 5) {
-                score += 10000;
-            } else if (count == 4 && openEnds == 2) {
-                score += 9000;
-            } else if (count == 4 && openEnds == 1) {
-                score += (symbol == 'O') ? 5000 : 4000;
-            } else if (count == 3 && openEnds == 2) {
-                score += (symbol == 'O') ? 500 : 400;
-            } else if (count == 2 && openEnds == 2) {
-                score += (symbol == 'O') ? 100 : 80;
-            } else if (count == 3 && openEnds == 1) {
-                score += (symbol == 'O') ? 200 : 150;
-            } else if (count == 2 && openEnds == 1) {
-                score += (symbol == 'O') ? 50 : 30;
+                return true;
             }
+    
         }
-
-        return score;
+        return false;
     }
-
+    
     private static int countConsecutive(char[][] board, int x, int y, int dx, int dy, char symbol) {
         int count = 0;
         int nx = x + dx;
@@ -138,55 +203,9 @@ public class CaroAIHard implements CaroBot{
         }
         return count;
     }
-
-    private static boolean isOpenEnd(char[][] board, int x, int y) {
-        return inBounds(x, y) && board[x][y] == '\0';
-    }
-
-    private static boolean inBounds(int r, int c) {
-        return r >= 0 && r < SIZE && c >= 0 && c < SIZE;
-    }
-
-    private static boolean checkGameEnd(char[][] board) {
-        for (int x = 0; x < SIZE; x++) {
-            for (int y = 0; y < SIZE; y++) {
-                if (board[x][y] != '\0' && checkWin(board, x, y)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private static boolean checkWin(char[][] board, int row, int col) {
-        char symbol = board[row][col];
-        return checkDirection(board, row, col, symbol, 1, 0)
-            || checkDirection(board, row, col, symbol, 0, 1)
-            || checkDirection(board, row, col, symbol, 1, 1)
-            || checkDirection(board, row, col, symbol, 1, -1);
-    }
-
-    private static boolean checkDirection(char[][] board, int row, int col, char symbol, int dx, int dy) {
-        int count = 1;
-        int r = row + dx, c = col + dy;
-        while (inBounds(r, c) && board[r][c] == symbol) { count++; r += dx; c += dy; }
-        r = row - dx; c = col - dy;
-        while (inBounds(r, c) && board[r][c] == symbol) { count++; r -= dx; c -= dy; }
-        return count >= 5;
-    }
-
-    private static char[][] copyBoard(char[][] original) {
-        char[][] copy = new char[SIZE][SIZE];
-        for (int x = 0; x < SIZE; x++) {
-            for (int y = 0; y < SIZE; y++) {
-                copy[x][y] = original[x][y];
-            }
-        }
-        return copy;
-    }
     
     @Override
     public String getName() {
         return "Hard AI";
     }
-} 
+}
